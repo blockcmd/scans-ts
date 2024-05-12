@@ -83,11 +83,83 @@ interface getInternalTransactionByTxHashResponse {
   }[];
 }
 
+interface getInternalTransactionsByBlockRangeResponse {
+  status: string;
+  message: string;
+  result: {
+    blockNumber: string;
+    timeStamp: string;
+    hash: string;
+    from: string;
+    to: string;
+    value: string;
+    contractAddress: string;
+    input: string;
+    type: string;
+    gas: string;
+    gasUsed: string;
+    traceId: string;
+    isError: string;
+    errCode: string;
+  }[];
+}
+
+interface getERC20TokenTransferEventsByAddressResponse {
+  status: string;
+  message: string;
+  result: {
+    blockNumber: string;
+    timeStamp: string;
+    hash: string;
+    nonce: string;
+    blockHash: string;
+    from: string;
+    contractAddress: string;
+    to: string;
+    value: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenDecimal: string;
+    transactionIndex: string;
+    gas: string;
+    gasPrice: string;
+    gasUsed: string;
+    cumulativeGasUsed: string;
+    input: string;
+    confirmations: string;
+  }[];
+}
+
+interface getERC721TokenTransferEventsByAddressResponse {
+  status: string;
+  message: string;
+  result: {
+    blockNumber: string;
+    timeStamp: string;
+    hash: string;
+    nonce: string;
+    blockHash: string;
+    from: string;
+    contractAddress: string;
+    to: string;
+    tokenID: string;
+    tokenName: string;
+    tokenSymbol: string;
+    transactionIndex: string;
+    gas: string;
+    gasPrice: string;
+    gasUsed: string;
+    cumulativeGasUsed: string;
+    input: string;
+    confirmations: string;
+  }[];
+}
+
 
 export type Address = `0x${string}`;
 
 
-export class Etherscan {
+export class Scans {
   apiKey: string; // Add apiKey from Etherscan
 
 
@@ -178,12 +250,50 @@ export class Etherscan {
     page: number = 1,
     offset: number = 10,
     sort: string = "asc"
-  ): Promise<getInternalTransactionsResponse> {
+  ): Promise<getInternalTransactionsByBlockRangeResponse> {
     const network = MAINNET_URL;
     const url = `${network}?module=account&action=txlistinternal&startblock=${startblock}&endblock=${endblock}&page=${page}&offset=${offset}&sort=${sort}&apikey=${this.apiKey}`;
     const response = await fetch(url);
     return response.json();
   }
+
+
+  // Get a list of 'ERC20 - Token Transfer Events' by Address
+  async getERC20TokenTransferEventsByAddress(
+    address: Address,
+    contractaddress?: Address,
+    page: number = 1,
+    offset: number = 10,
+    startblock: number = 0,
+    endblock: number = 99999999,
+    sort: string = "asc"
+  ): Promise<getERC20TokenTransferEventsByAddressResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=tokentx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const response = await fetch(url);
+    return response.json();
+  }
+
+
+  // Get a list of 'ERC721 - Token Transfer Events' by Address
+  async getERC721TokenTransferEventsByAddress(
+    address: Address,
+    contractaddress?: Address,
+    page: number = 1,
+    offset: number = 10,
+    startblock: number = 0,
+    endblock: number = 99999999,
+    sort: string = "asc"
+  ): Promise<getERC721TokenTransferEventsByAddressResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=tokennfttx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const response = await fetch(url);
+    return response.json();
+  }
+
+
+  //
+
 
   async getERC20AccountBalance(address: string, contractAddress: string) {
     const url = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${this.apiKey}`;

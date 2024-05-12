@@ -1,1 +1,1 @@
-export {Etherscan} from './scans'
+export { Scans } from './scans'

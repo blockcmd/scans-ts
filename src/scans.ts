@@ -17,16 +17,12 @@ interface AccountsResponse {
 
 export class Etherscan {
   apiKey: string; // Add apiKey from Etherscan
-  rateLimit: number; // rateLimit as number of calls per second
 
-  constructor(apiKey: string, rateLimit: number) {
+  constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.rateLimit = rateLimit;
   }
 
   async getAccounts(address: string | string[]) {
-    // wait for 0.5 seconds before making the request
-    await new Promise((resolve) => setTimeout(resolve, 300));
     if (Array.isArray(address)) {
       address = address.join(",");
     }
@@ -36,8 +32,6 @@ export class Etherscan {
   }
 
   async getERC20AccountBalance(address: string, contractAddress: string) {
-    // wait for 0.5 seconds before making the request
-    await new Promise((resolve) => setTimeout(resolve, 300));
     const url = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${this.apiKey}`;
     const response = await fetch(url);
     return response.json();

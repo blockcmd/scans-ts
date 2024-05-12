@@ -155,6 +155,31 @@ interface getERC721TokenTransferEventsByAddressResponse {
   }[];
 }
 
+interface getERC1155TokenTransferEventsByAddressResponse {
+  status: string;
+  message: string;
+  result: {
+    blockNumber: string;
+    timeStamp: string;
+    hash: string;
+    nonce: string;
+    blockHash: string;
+    from: string;
+    contractAddress: string;
+    to: string;
+    tokenID: string;
+    tokenName: string;
+    tokenSymbol: string;
+    transactionIndex: string;
+    gas: string;
+    gasPrice: string;
+    gasUsed: string;
+    cumulativeGasUsed: string;
+    input: string;
+    confirmations: string;
+  }[];
+}
+
 
 export type Address = `0x${string}`;
 
@@ -292,7 +317,21 @@ export class Scans {
   }
 
 
-  //
+  // Get a list of 'ERC1155 - Token Transfer Events' by Address
+  async getERC1155TokenTransferEventsByAddress(
+    address: Address,
+    contractaddress?: Address,
+    page: number = 1,
+    offset: number = 10,
+    startblock: number = 0,
+    endblock: number = 99999999,
+    sort: string = "asc"
+  ): Promise<getERC1155TokenTransferEventsByAddressResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=token1155tx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const response = await fetch(url);
+    return response.json();
+  }
 
 
   async getERC20AccountBalance(address: string, contractAddress: string) {

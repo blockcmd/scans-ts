@@ -1,0 +1,1 @@
+import {Etherscan} from './src/scans.ts'

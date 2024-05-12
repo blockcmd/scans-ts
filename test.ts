@@ -4,8 +4,17 @@ import { Config } from './config'
 
 const etherscan = new Etherscan(Config.apiKey || "")
 
-// Test getAccounts
-etherscan.getAccounts(Config.test1)
+// Test getAccount
+etherscan.getAccount(Config.test1)
+  .then(result => {
+    console.log(result);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+// Test getAccount but provide empty address
+etherscan.getAccount(Config.test2)
   .then(result => {
     console.log(result);
   })
@@ -14,7 +23,7 @@ etherscan.getAccounts(Config.test1)
   });
 
 // Test getAccounts for multiple addresses
-etherscan.getAccounts(Config.test2)
+etherscan.getAccounts(Config.test3)
   .then(result => {
     console.log(result);
   })

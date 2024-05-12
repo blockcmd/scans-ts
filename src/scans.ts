@@ -180,19 +180,44 @@ interface getERC1155TokenTransferEventsByAddressResponse {
   }[];
 }
 
+interface getBlocksValidatedByAddressResponse {
+  status: string;
+  message: string;
+  result: {
+    blockNumber: string;
+    timeStamp: string;
+    blockReward: string;
+  }[];
+}
+
+interface getBeaconChainWithdrawalsByAddressAndBlockRangeResponse {
+  status: string;
+  message: string;
+  result: {
+    withdrawalIndex: string;
+    validatorIndex: string;
+    address: string;
+    amount: string;
+    blockNumber: string;
+    timestamp: string;
+  }[];
+}
+
+interface getHistoricalEtherBalanceForSingleAddressByBlockNoResponse {
+  status: string;
+  message: string;
+  result: string;
+}
 
 export type Address = `0x${string}`;
 
-
 export class Scans {
   apiKey: string; // Add apiKey from Etherscan
-
 
   // initialize the class with the API key
   constructor(apiKey: string) {
     this.apiKey = apiKey;
   }
-
 
   // Get single account balance
   async getAccount(
@@ -207,7 +232,6 @@ export class Scans {
     const response = await fetch(url);
     return response.json();
   }
-
 
   // Get multiple accounts in one request
   async getAccounts(
@@ -226,7 +250,6 @@ export class Scans {
     return response.json();
   }
 
-
   // Get 'Normal Transactions' by Address
   async getNormalTransactions(
     address: Address,
@@ -240,7 +263,6 @@ export class Scans {
     const response = await fetch(url);
     return response.json();
   }
-
 
   // Get 'Internal Transactions' by Address
   async getInternalTransactions(
@@ -256,7 +278,6 @@ export class Scans {
     return response.json();
   }
 
-
   // Get 'Internal Transactions' by Transaction Hash
   async getInternalTransactionsByTxHash(
     txhash: Address
@@ -266,7 +287,6 @@ export class Scans {
     const response = await fetch(url);
     return response.json();
   }
-
 
   // Get "Internal Transactions" by Block Range
   async getInternalTransactionsByBlockRange(
@@ -282,7 +302,6 @@ export class Scans {
     return response.json();
   }
 
-
   // Get a list of 'ERC20 - Token Transfer Events' by Address
   async getERC20TokenTransferEventsByAddress(
     address: Address,
@@ -294,11 +313,14 @@ export class Scans {
     sort: string = "asc"
   ): Promise<getERC20TokenTransferEventsByAddressResponse> {
     const network = MAINNET_URL;
-    const url = `${network}?module=account&action=tokentx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const url = `${network}?module=account&action=tokentx&address=${address}${
+      contractaddress ? `&contractaddress${contractaddress}` : ""
+    }&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${
+      this.apiKey
+    }`;
     const response = await fetch(url);
     return response.json();
   }
-
 
   // Get a list of 'ERC721 - Token Transfer Events' by Address
   async getERC721TokenTransferEventsByAddress(
@@ -311,11 +333,14 @@ export class Scans {
     sort: string = "asc"
   ): Promise<getERC721TokenTransferEventsByAddressResponse> {
     const network = MAINNET_URL;
-    const url = `${network}?module=account&action=tokennfttx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const url = `${network}?module=account&action=tokennfttx&address=${address}${
+      contractaddress ? `&contractaddress${contractaddress}` : ""
+    }&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${
+      this.apiKey
+    }`;
     const response = await fetch(url);
     return response.json();
   }
-
 
   // Get a list of 'ERC1155 - Token Transfer Events' by Address
   async getERC1155TokenTransferEventsByAddress(
@@ -328,18 +353,66 @@ export class Scans {
     sort: string = "asc"
   ): Promise<getERC1155TokenTransferEventsByAddressResponse> {
     const network = MAINNET_URL;
-    const url = `${network}?module=account&action=token1155tx&address=${address}${contractaddress ? `&contractaddress${contractaddress}` : ''}&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${this.apiKey}`;
+    const url = `${network}?module=account&action=token1155tx&address=${address}${
+      contractaddress ? `&contractaddress${contractaddress}` : ""
+    }&page=${page}&offset=${offset}&startblock=${startblock}&endblock=${endblock}&sort=${sort}&apikey=${
+      this.apiKey
+    }`;
+    const response = await fetch(url);
+    return response.json();
+  }
+
+  // Get list of Blocks Validated by Address
+  async getBlocksValidatedByAddress(
+    address: Address,
+    blocktype: string = "blocks",
+    page: number = 1,
+    offset: number = 10
+  ): Promise<getBlocksValidatedByAddressResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=getminedblocks&address=${address}&blocktype=${blocktype}&page=${page}&offset=${offset}&apikey=${this.apiKey}`;
+    const response = await fetch(url);
+    return response.json();
+  }
+
+  // Get Beacon Chain Withdrawals by Address and Block Range
+  async getBeaconChainWithdrawalsByAddress(
+    address: Address,
+    contractaddress: Address,
+    page: number = 1,
+    offset: number = 10,
+    startblock: number,
+    endblock: number,
+    sort: string = "asc"
+  ): Promise<getBeaconChainWithdrawalsByAddressAndBlockRangeResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=txsBeaconWithdrawal&address=${address}${
+      contractaddress ? `&contractaddress${contractaddress}` : ""
+    }&startblock=${startblock}&endblock=${endblock}&page=${page}&offset=${offset}&sort=${sort}&apikey=${
+      this.apiKey
+    }`;
     const response = await fetch(url);
     return response.json();
   }
 
 
-  async getERC20AccountBalance(address: string, contractAddress: string) {
+  // Get Historical Ether Balance for a Single Address By BlockNo
+  async getHistoricalEtherBalanceForSingleAddressByBlockNo(
+    address: Address,
+    blockno: number
+  ): Promise<getHistoricalEtherBalanceForSingleAddressByBlockNoResponse> {
+    const network = MAINNET_URL;
+    const url = `${network}?module=account&action=balancehistory&address=${address}&blockno=${blockno}&apikey=${this.apiKey}`;
+    const response = await fetch(url);
+    return response.json();
+  }
+
+  async getERC20AccountBalance(
+    address: string, 
+    contractAddress: string
+  ): Promise<any> {
     const url = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${this.apiKey}`;
     const response = await fetch(url);
     return response.json();
   }
-
-
 }
-
